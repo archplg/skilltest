@@ -3,6 +3,18 @@
 **Test framework and CI gate for AI agent skills (`SKILL.md`).**
 Bilingual RU/EN evals · behaviour contract (`spec.yaml`) · LLM judge · with-skill vs no-skill baseline · trigger test · prompt-injection guard with Cyrillic-aware patterns · HTML / JSON / JUnit / SARIF reports · non-zero exit codes for CI.
 
+**→ [skillemall.ai](https://skillemall.ai)** is the public rating this engine runs: 118,000+ skills pulled from
+open catalogs, graded A–F for safety and quality, with a second, separate grade for whether a skill's process
+actually runs to the end. Search it, browse today's catch of broken or risky skills, or check your own skill there
+for free — no install. Everything below is the same engine, to run yourself or wire into CI.
+
+<p align="center">
+  <a href="https://skillemall.ai"><img src="docs/screenshots/home.png" alt="skillemall.ai — search skills by task, today's caught skills, freshness and trend" width="820"></a>
+</p>
+<p align="center">
+  <a href="https://skillemall.ai/rating"><img src="docs/screenshots/rating.png" alt="skillemall.ai rating table — grade, safety, quality, process, tests, popularity" width="820"></a>
+</p>
+
 [Русская версия → README.ru.md](README.ru.md)
 
 > Until the package is on npm: `npm i -g github:archplg/skilltest`, then `skilleval …`; or `npx github:archplg/skilltest …`.

@@ -3,9 +3,9 @@
  *
  * Guard answers "will it harm", lint and craft signals answer "is it written decently", a live run answers "does it
  * help the model". None of them answers the installer's real question: does the process finish. This module is the
- * free, deterministic layer of that answer — ten parameters from docs/PROCESS-CHECK.ru.md plus the code-measurable
- * half of the business axes from docs/BUSINESS-REVIEW.ru.md. Everything here is countable; judgement stays for the
- * paid review, so a finding from this module is a fact, not an opinion.
+ * free, deterministic layer of that answer — ten parameters covering trigger, inputs, steps, tools, failure
+ * handling, a stop condition and output, plus the code-measurable half of production-readiness. Everything here is
+ * countable; judgement stays for the paid review, so a finding from this module is a fact, not an opinion.
  */
 
 const FENCE_RE = /```[\s\S]*?```/g;
