@@ -3,6 +3,8 @@
 **Тестовый фреймворк и CI-барьер для скиллов AI-агентов (`SKILL.md`).**
 Двуязычные RU/EN тест-кейсы · контракт поведения (`spec.yaml`) · модель-судья · сравнение «со скиллом / без скилла» · тест срабатывания (триггеров) · сканер prompt injection с кириллическими паттернами · отчёты HTML / JSON / JUnit / SARIF · ненулевые коды выхода для CI.
 
+[![tests](https://github.com/archplg/skilltest/actions/workflows/ci.yml/badge.svg)](https://github.com/archplg/skilltest/actions/workflows/ci.yml) [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 **→ [skillemall.ai](https://skillemall.ai)** — публичный рейтинг на этом движке: 118 000+ скиллов из открытых
 каталогов, оценка A–F за безопасность и качество, и отдельная вторая оценка — дойдёт ли процесс скилла до конца.
 Ищите по задаче, смотрите сегодняшний улов сломанных и рискованных скиллов или проверьте свой — бесплатно, без

@@ -3,6 +3,8 @@
 **Test framework and CI gate for AI agent skills (`SKILL.md`).**
 Bilingual RU/EN evals · behaviour contract (`spec.yaml`) · LLM judge · with-skill vs no-skill baseline · trigger test · prompt-injection guard with Cyrillic-aware patterns · HTML / JSON / JUnit / SARIF reports · non-zero exit codes for CI.
 
+[![tests](https://github.com/archplg/skilltest/actions/workflows/ci.yml/badge.svg)](https://github.com/archplg/skilltest/actions/workflows/ci.yml) [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 **→ [skillemall.ai](https://skillemall.ai)** is the public rating this engine runs: 118,000+ skills pulled from
 open catalogs, graded A–F for safety and quality, with a second, separate grade for whether a skill's process
 actually runs to the end. Search it, browse today's catch of broken or risky skills, or check your own skill there
