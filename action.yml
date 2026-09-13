@@ -1,0 +1,102 @@
+name: 'SkillTest — test & security gate for agent skills'
+description: 'Runs skilltest ci on a SKILL.md folder: guard (prompt-injection scan RU/EN) → bilingual evals → trigger test → HTML/JUnit/SARIF reports. Fails the job on DEGRADED or BLOCKED.'
+author: 'Sergey Dolgov / Archipelago'
+branding:
+  icon: 'shield'
+  color: 'green'
+inputs:
+  skill:
+    description: 'Path to the skill folder (contains SKILL.md)'
+    required: true
+    default: '.'
+  models:
+    description: 'Comma-separated model refs, e.g. openrouter:anthropic/claude-sonnet-4.6,openrouter:openai/gpt-5.5. Empty = spec.yaml / SKILLTEST_MODELS / OpenRouter default.'
+    required: false
+    default: ''
+  judge:
+    description: 'Judge model ref (default: first model)'
+    required: false
+    default: ''
+  budget:
+    description: 'Hard spend cap in USD for this run'
+    required: false
+    default: '2'
+  mock:
+    description: 'Run offline with the mock provider (no keys, $0) — format/CI smoke test only'
+    required: false
+    default: 'false'
+  strict:
+    description: 'Also fail on OBSOLETE (skill adds nothing over baseline)'
+    required: false
+    default: 'true'
+  fail-on:
+    description: 'Guard block level: critical | high | medium | none'
+    required: false
+    default: 'critical'
+  args:
+    description: 'Extra CLI arguments'
+    required: false
+    default: ''
+  version:
+    description: 'Reserved: the action runs the code of its own checkout (pin it by tag)'
+    required: false
+    default: 'latest'
+outputs:
+  status:
+    description: 'ACTIVE | DEGRADED | OBSOLETE | BLOCKED | DRAFT | ERROR'
+    value: ${{ steps.run.outputs.status }}
+  exit-code:
+    description: 'Process exit code (0 ok, 1 degraded, 2 error, 3 blocked)'
+    value: ${{ steps.run.outputs.exit_code }}
+  report-dir:
+    description: 'Directory with results.json, report.html, junit.xml, guard.sarif'
+    value: ${{ steps.run.outputs.report_dir }}
+runs:
+  using: composite
+  steps:
+    - id: run
+      shell: bash
+      env:
+        SKILL_DIR: ${{ inputs.skill }}
+        IN_MODELS: ${{ inputs.models }}
+        IN_JUDGE: ${{ inputs.judge }}
+        IN_BUDGET: ${{ inputs.budget }}
+        IN_MOCK: ${{ inputs.mock }}
+        IN_STRICT: ${{ inputs.strict }}
+        IN_FAIL_ON: ${{ inputs['fail-on'] }}
+        IN_ARGS: ${{ inputs.args }}
+        IN_VERSION: ${{ inputs.version }}
+      run: |
+        set +e
+        ARGS=(run "$SKILL_DIR" --budget "$IN_BUDGET" --fail-on "$IN_FAIL_ON")
+        [ -n "$IN_MODELS" ] && ARGS+=(--models "$IN_MODELS")
+        [ -n "$IN_JUDGE" ] && ARGS+=(--judge "$IN_JUDGE")
+        [ "$IN_MOCK" = "true" ] && ARGS+=(--mock)
+        [ "$IN_STRICT" = "true" ] && ARGS+=(--strict)
+        # shellcheck disable=SC2206
+        [ -n "$IN_ARGS" ] && ARGS+=($IN_ARGS)
+        echo "::group::skilltest ${ARGS[*]}"
+        npm ci --omit=dev --silent --prefix "$GITHUB_ACTION_PATH"
+        node "$GITHUB_ACTION_PATH/bin/skilltest.js" "${ARGS[@]}"
+        CODE=$?
+        echo "::endgroup::"
+        REPORT_DIR="$SKILL_DIR/.skilltest"
+        STATUS=$(node -e "try{console.log(JSON.parse(require('fs').readFileSync(process.argv[1],'utf8')).status)}catch(e){console.log('ERROR')}" "$REPORT_DIR/results.json")
+        echo "status=$STATUS" >> "$GITHUB_OUTPUT"
+        echo "exit_code=$CODE" >> "$GITHUB_OUTPUT"
+        echo "report_dir=$REPORT_DIR" >> "$GITHUB_OUTPUT"
+        {
+          echo "## SkillTest · $STATUS (exit $CODE)"
+          node -e "
+            const s=JSON.parse(require('fs').readFileSync(process.argv[1],'utf8'));
+            const p=x=>x==null?'—':Math.round(x*100)+'%';
+            console.log('| metric | value |'); console.log('|---|---|');
+            console.log('| pass rate (with skill) | '+p(s.passRate)+' |');
+            console.log('| baseline (no skill) | '+p(s.baselinePassRate)+' |');
+            if(s.triggers&&s.triggers.ran) console.log('| triggers positive / negative | '+p(s.triggers.positiveRate)+' / '+p(s.triggers.negativeRate)+' |');
+            if(s.guard) console.log('| guard findings | '+s.guard.findings.length+' (critical '+s.guard.counts.critical+', high '+s.guard.counts.high+') |');
+            if(s.spend) console.log('| spend | $'+s.spend.usd.toFixed(4)+' · '+s.spend.calls+' calls |');
+            console.log(''); for(const r of s.reasons||[]) console.log('- '+r.en);
+          " "$REPORT_DIR/results.json" 2>/dev/null
+        } >> "$GITHUB_STEP_SUMMARY"
+        exit $CODE

@@ -1,0 +1,5 @@
+node_modules/
+.skilltest/
+*.log
+.DS_Store
+.skilltest-audit/

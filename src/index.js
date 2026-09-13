@@ -1,0 +1,23 @@
+/** Programmatic API. */
+export { runSkill, resolveModels, resolveJudge, assertionsFor, planRun, aggregate } from './runner.js';
+export { loadSkill, parseSkillMd, buildSkillSystemPrompt, summarize, LIMITS } from './skill.js';
+export { loadSpec, normalizeAssertions, assertionApplies, DEFAULT_THRESHOLDS, ASSERTION_TYPES } from './spec.js';
+export { loadEvals, buildUserMessage } from './evals.js';
+export { lintSkill, missingRefs } from './lint.js';
+export { classifySkill, SKILL_TYPES, TOPICS, typeLabel, topicLabel } from './taxonomy.js';
+export { detectApps, APPS, appLabel } from './apps.js';
+export { processSignals } from './process.js';
+export { scanSkill, scanText, isBlocked } from './guard/scan.js';
+export { PATTERNS, UNICODE_CHECKS } from './guard/patterns.js';
+export { evaluateAssertion, evaluateAll } from './assertions/index.js';
+export { createJudge, parseJsonLoose } from './judge.js';
+export { runTriggerTest, DECOY_SKILLS } from './triggers.js';
+export { computeStatus, STATUS } from './status.js';
+export { chat, parseModelRef, Spend, BudgetExceeded, availableProviders } from './providers/index.js';
+export { renderHtml } from './report/html.js';
+export { renderJunit } from './report/junit.js';
+export { renderSarif } from './report/sarif.js';
+export { initSkill } from './init.js';
+export { VERSION } from './version.js';
+export { scoreSkill, gradeFor, GRADES, RULES_VERSION } from './score.js';
+export { qualitySignals, QUALITY_BASE } from './signals.js';

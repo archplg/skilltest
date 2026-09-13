@@ -1,0 +1,60 @@
+{
+  "name": "skilleval",
+  "version": "0.1.0",
+  "description": "SkillTest: test framework and CI gate for AI agent skills (SKILL.md). Bilingual RU/EN evals, behavioural assertions, LLM judge, with-skill vs baseline, trigger tests, prompt-injection guard with Cyrillic-aware patterns, HTML/JSON/JUnit/SARIF reports, non-zero exit codes for CI. The engine behind skillemall.ai.",
+  "type": "module",
+  "bin": {
+    "skilleval": "bin/skilltest.js",
+    "skilltest": "bin/skilltest.js"
+  },
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "files": [
+    "bin",
+    "src",
+    "action.yml",
+    "README.md",
+    "README.ru.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --experimental-sqlite --no-warnings --test \"test/*.test.js\"",
+    "demo": "node bin/skilltest.js run examples/ticket-classifier --mock",
+    "demo:ru": "node bin/skilltest.js run examples/ticket-classifier --mock --lang ru",
+    "demo:guard": "node bin/skilltest.js guard test/fixtures/malicious-skill",
+    "lint": "node bin/skilltest.js lint examples/ticket-classifier"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "agent-skills",
+    "skill.md",
+    "claude",
+    "claude-code",
+    "codex",
+    "cursor",
+    "openclaw",
+    "evals",
+    "testing",
+    "ci",
+    "prompt-injection",
+    "llm-judge",
+    "openrouter",
+    "litellm"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "yaml": "^2.6.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/archplg/skilltest.git"
+  },
+  "homepage": "https://skillemall.ai",
+  "bugs": {
+    "url": "https://github.com/archplg/skilltest/issues"
+  }
+}
