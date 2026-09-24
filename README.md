@@ -3,9 +3,13 @@
 **Test framework and CI gate for AI agent skills (`SKILL.md`).**
 Bilingual RU/EN evals · behaviour contract (`spec.yaml`) · LLM judge · with-skill vs no-skill baseline · trigger test · prompt-injection guard with Cyrillic-aware patterns · HTML / JSON / JUnit / SARIF reports · non-zero exit codes for CI.
 
+> **Does your skill beat no skill at all?** Every case runs twice - with the skill and without it, on the same model.
+> If the model already does the job on its own, the skill gets **OBSOLETE**, however well it is written.
+> Most skill repos never check this.
+
 [![tests](https://github.com/archplg/skilltest/actions/workflows/ci.yml/badge.svg)](https://github.com/archplg/skilltest/actions/workflows/ci.yml) [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-**→ [skillemall.ai](https://skillemall.ai)** is the public rating this engine runs: 118,000+ skills pulled from
+**→ [skillemall.ai](https://skillemall.ai)** is the public rating this engine runs: 120,000+ skills pulled from
 open catalogs, graded A–F for safety and quality, with a second, separate grade for whether a skill's process
 actually runs to the end. Search it, browse today's catch of broken or risky skills, or check your own skill there
 for free — no install. Everything below is the same engine, to run yourself or wire into CI.
@@ -39,7 +43,7 @@ SkillTest turns a skill into something you can put behind CI:
 | **guard** | Does the skill folder contain injections, exfiltration, dangerous commands, secrets? (RU + EN patterns, invisible-Unicode checks) | any *critical* finding (configurable) |
 | **lint** | Is the frontmatter valid, within limits, are referenced files present, is the description telling the model *when* to trigger? | errors |
 | **cases** | Does the skill still produce the expected behaviour on real requests (in the user's language)? | pass rate < threshold, or a drop vs the saved snapshot |
-| **baseline** | Does the skill add anything over the same model *without* the skill? | uplift below threshold → status **OBSOLETE** |
+| **baseline** | Does the skill add anything over the same model *without* the skill? | uplift below threshold → status **OBSOLETE** (fails the build with `--strict` or `skilleval ci`; exit 0 by default) |
 | **triggers** | Does the description make the model pick this skill for the right phrases — and *not* for the wrong ones? | positive/negative trigger rate < threshold |
 
 Statuses follow the Skillemall lifecycle: **ACTIVE · DEGRADED · OBSOLETE · BLOCKED · DRAFT · ERROR**.
