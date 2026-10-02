@@ -1,5 +1,5 @@
 name: 'SkillTest — test & security gate for agent skills'
-description: 'Runs skilltest ci on a SKILL.md folder: guard (prompt-injection scan RU/EN) → bilingual evals → trigger test → HTML/JUnit/SARIF reports. Fails the job on DEGRADED or BLOCKED.'
+description: 'Test and security-gate an agent skill (SKILL.md): injection scan, evals with vs without the skill, CI reports.'
 author: 'Sergey Dolgov / Archipelago'
 branding:
   icon: 'shield'
@@ -68,6 +68,8 @@ runs:
         IN_VERSION: ${{ inputs.version }}
       run: |
         set +e
+        # The engine needs Node 20+. Say so plainly instead of failing on a syntax error deep inside.
+        node -e "process.exit(Number(process.versions.node.split('.')[0]) >= 20 ? 0 : 1)" || { echo "::error::SkillTest needs Node 20 or newer. Add actions/setup-node before this step."; exit 2; }
         ARGS=(run "$SKILL_DIR" --budget "$IN_BUDGET" --fail-on "$IN_FAIL_ON")
         [ -n "$IN_MODELS" ] && ARGS+=(--models "$IN_MODELS")
         [ -n "$IN_JUDGE" ] && ARGS+=(--judge "$IN_JUDGE")

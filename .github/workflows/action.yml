@@ -1,0 +1,36 @@
+name: action
+# The action is what other people's CI runs. This proves on every push that it still works from a clean
+# checkout: offline on the bundled example, and that it blocks the malicious fixture.
+on:
+  push:
+  pull_request:
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Runs offline on the bundled example
+        id: ok
+        uses: ./
+        with:
+          skill: examples/ticket-classifier
+          mock: 'true'
+      - name: Reports ACTIVE and leaves the reports behind
+        run: |
+          [ "${{ steps.ok.outputs.status }}" = "ACTIVE" ] || { echo "expected ACTIVE, got ${{ steps.ok.outputs.status }}"; exit 1; }
+          for f in results.json report.html junit.xml guard.sarif; do [ -s "${{ steps.ok.outputs.report-dir }}/$f" ] || { echo "missing $f"; exit 1; }; done
+      - name: Blocks the malicious fixture
+        id: bad
+        continue-on-error: true
+        uses: ./
+        with:
+          skill: test/fixtures/malicious-skill
+          mock: 'true'
+      - name: Fails the step and reports BLOCKED
+        run: |
+          [ "${{ steps.bad.outcome }}" = "failure" ] || { echo "expected the step to fail, got ${{ steps.bad.outcome }}"; exit 1; }
+          STATUS=$(node -e "console.log(JSON.parse(require('fs').readFileSync('test/fixtures/malicious-skill/.skilltest/results.json','utf8')).status)")
+          [ "$STATUS" = "BLOCKED" ] || { echo "expected BLOCKED, got $STATUS"; exit 1; }
